@@ -1,0 +1,2231 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>CodeBuddy Code 产品架构与快速上手指南</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+:root {
+--background-body: #fff;
+--background: #efefef;
+--background-alt: #f7f7f7;
+--selection: #9e9e9e;
+--text-main: #363636;
+--text-bright: #000;
+--text-muted: #70777f;
+--links: #0076d1;
+--focus: #0096bfab;
+--border: #dbdbdb;
+--code: #000;
+--animation-duration: 0.1s;
+--button-base: #d0cfcf;
+--button-hover: #9b9b9b;
+--scrollbar-thumb: rgb(170, 170, 170);
+--scrollbar-thumb-hover: var(--button-hover);
+--form-placeholder: #949494;
+--form-text: #1d1d1d;
+--variable: #39a33c;
+--highlight: #ff0;
+--select-arrow: url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23161f27'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+:root {
+--background-body: #202b38;
+--background: #161f27;
+--background-alt: #1a242f;
+--selection: #1c76c5;
+--text-main: #dbdbdb;
+--text-bright: #fff;
+--text-muted: #a9b1ba;
+--links: #41adff;
+--focus: #0096bfab;
+--border: #526980;
+--code: #ffbe85;
+--animation-duration: 0.1s;
+--button-base: #0c151c;
+--button-hover: #040a0f;
+--scrollbar-thumb: var(--button-hover);
+--scrollbar-thumb-hover: rgb(0, 0, 0);
+--form-placeholder: #a9a9a9;
+--form-text: #fff;
+--variable: #d941e2;
+--highlight: #efdb43;
+--select-arrow: url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23efefef'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E");
+}
+}
+html {
+scrollbar-color: rgb(170, 170, 170) #fff;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+scrollbar-width: thin;
+}
+@media (prefers-color-scheme: dark) {
+html {
+scrollbar-color: #040a0f #202b38;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+}
+}
+@media (prefers-color-scheme: dark) {
+html {
+scrollbar-color: #040a0f #202b38;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+}
+}
+@media (prefers-color-scheme: dark) {
+html {
+scrollbar-color: #040a0f #202b38;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+}
+}
+@media (prefers-color-scheme: dark) {
+html {
+scrollbar-color: #040a0f #202b38;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+}
+}
+@media (prefers-color-scheme: dark) {
+html {
+scrollbar-color: #040a0f #202b38;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+}
+}
+@media (prefers-color-scheme: dark) {
+html {
+scrollbar-color: #040a0f #202b38;
+scrollbar-color: var(--scrollbar-thumb) var(--background-body);
+}
+}
+body {
+font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif;
+line-height: 1.4;
+max-width: 800px;
+margin: 20px auto;
+padding: 0 10px;
+word-wrap: break-word;
+color: #363636;
+color: var(--text-main);
+background: #fff;
+background: var(--background-body);
+text-rendering: optimizeLegibility;
+}
+@media (prefers-color-scheme: dark) {
+body {
+background: #202b38;
+background: var(--background-body);
+}
+}
+@media (prefers-color-scheme: dark) {
+body {
+color: #dbdbdb;
+color: var(--text-main);
+}
+}
+button {
+transition:
+background-color 0.1s linear,
+border-color 0.1s linear,
+color 0.1s linear,
+box-shadow 0.1s linear,
+transform 0.1s ease;
+transition:
+background-color var(--animation-duration) linear,
+border-color var(--animation-duration) linear,
+color var(--animation-duration) linear,
+box-shadow var(--animation-duration) linear,
+transform var(--animation-duration) ease;
+}
+@media (prefers-color-scheme: dark) {
+button {
+transition:
+background-color 0.1s linear,
+border-color 0.1s linear,
+color 0.1s linear,
+box-shadow 0.1s linear,
+transform 0.1s ease;
+transition:
+background-color var(--animation-duration) linear,
+border-color var(--animation-duration) linear,
+color var(--animation-duration) linear,
+box-shadow var(--animation-duration) linear,
+transform var(--animation-duration) ease;
+}
+}
+input {
+transition:
+background-color 0.1s linear,
+border-color 0.1s linear,
+color 0.1s linear,
+box-shadow 0.1s linear,
+transform 0.1s ease;
+transition:
+background-color var(--animation-duration) linear,
+border-color var(--animation-duration) linear,
+color var(--animation-duration) linear,
+box-shadow var(--animation-duration) linear,
+transform var(--animation-duration) ease;
+}
+@media (prefers-color-scheme: dark) {
+input {
+transition:
+background-color 0.1s linear,
+border-color 0.1s linear,
+color 0.1s linear,
+box-shadow 0.1s linear,
+transform 0.1s ease;
+transition:
+background-color var(--animation-duration) linear,
+border-color var(--animation-duration) linear,
+color var(--animation-duration) linear,
+box-shadow var(--animation-duration) linear,
+transform var(--animation-duration) ease;
+}
+}
+textarea {
+transition:
+background-color 0.1s linear,
+border-color 0.1s linear,
+color 0.1s linear,
+box-shadow 0.1s linear,
+transform 0.1s ease;
+transition:
+background-color var(--animation-duration) linear,
+border-color var(--animation-duration) linear,
+color var(--animation-duration) linear,
+box-shadow var(--animation-duration) linear,
+transform var(--animation-duration) ease;
+}
+@media (prefers-color-scheme: dark) {
+textarea {
+transition:
+background-color 0.1s linear,
+border-color 0.1s linear,
+color 0.1s linear,
+box-shadow 0.1s linear,
+transform 0.1s ease;
+transition:
+background-color var(--animation-duration) linear,
+border-color var(--animation-duration) linear,
+color var(--animation-duration) linear,
+box-shadow var(--animation-duration) linear,
+transform var(--animation-duration) ease;
+}
+}
+h1 {
+font-size: 2.2em;
+margin-top: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-bottom: 12px;
+margin-top: 24px;
+}
+h1 {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+h1 {
+color: #fff;
+color: var(--text-bright);
+}
+}
+h2 {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+h2 {
+color: #fff;
+color: var(--text-bright);
+}
+}
+h3 {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+h3 {
+color: #fff;
+color: var(--text-bright);
+}
+}
+h4 {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+h4 {
+color: #fff;
+color: var(--text-bright);
+}
+}
+h5 {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+h5 {
+color: #fff;
+color: var(--text-bright);
+}
+}
+h6 {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+h6 {
+color: #fff;
+color: var(--text-bright);
+}
+}
+strong {
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+strong {
+color: #fff;
+color: var(--text-bright);
+}
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+b,
+strong,
+th {
+font-weight: 600;
+}
+q::before {
+content: none;
+}
+q::after {
+content: none;
+}
+blockquote {
+border-left: 4px solid #0096bfab;
+border-left: 4px solid var(--focus);
+margin: 1.5em 0;
+padding: 0.5em 1em;
+font-style: italic;
+}
+@media (prefers-color-scheme: dark) {
+blockquote {
+border-left: 4px solid #0096bfab;
+border-left: 4px solid var(--focus);
+}
+}
+q {
+border-left: 4px solid #0096bfab;
+border-left: 4px solid var(--focus);
+margin: 1.5em 0;
+padding: 0.5em 1em;
+font-style: italic;
+}
+@media (prefers-color-scheme: dark) {
+q {
+border-left: 4px solid #0096bfab;
+border-left: 4px solid var(--focus);
+}
+}
+blockquote > footer {
+font-style: normal;
+border: 0;
+}
+blockquote cite {
+font-style: normal;
+}
+address {
+font-style: normal;
+}
+a[href^='mailto\:']::before {
+content: '📧 ';
+}
+a[href^='tel\:']::before {
+content: '📞 ';
+}
+a[href^='sms\:']::before {
+content: '💬 ';
+}
+mark {
+background-color: #ff0;
+background-color: var(--highlight);
+border-radius: 2px;
+padding: 0 2px 0 2px;
+color: #000;
+}
+@media (prefers-color-scheme: dark) {
+mark {
+background-color: #efdb43;
+background-color: var(--highlight);
+}
+}
+a > code,
+a > strong {
+color: inherit;
+}
+button,
+select,
+input[type='submit'],
+input[type='reset'],
+input[type='button'],
+input[type='checkbox'],
+input[type='range'],
+input[type='radio'] {
+cursor: pointer;
+}
+input,
+select {
+display: block;
+}
+[type='checkbox'],
+[type='radio'] {
+display: initial;
+}
+input {
+color: #1d1d1d;
+color: var(--form-text);
+background-color: #efefef;
+background-color: var(--background);
+font-family: inherit;
+font-size: inherit;
+margin-right: 6px;
+margin-bottom: 6px;
+padding: 10px;
+border: none;
+border-radius: 6px;
+outline: none;
+}
+@media (prefers-color-scheme: dark) {
+input {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+@media (prefers-color-scheme: dark) {
+input {
+color: #fff;
+color: var(--form-text);
+}
+}
+button {
+color: #1d1d1d;
+color: var(--form-text);
+background-color: #efefef;
+background-color: var(--background);
+font-family: inherit;
+font-size: inherit;
+margin-right: 6px;
+margin-bottom: 6px;
+padding: 10px;
+border: none;
+border-radius: 6px;
+outline: none;
+}
+@media (prefers-color-scheme: dark) {
+button {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+@media (prefers-color-scheme: dark) {
+button {
+color: #fff;
+color: var(--form-text);
+}
+}
+textarea {
+color: #1d1d1d;
+color: var(--form-text);
+background-color: #efefef;
+background-color: var(--background);
+font-family: inherit;
+font-size: inherit;
+margin-right: 6px;
+margin-bottom: 6px;
+padding: 10px;
+border: none;
+border-radius: 6px;
+outline: none;
+}
+@media (prefers-color-scheme: dark) {
+textarea {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+@media (prefers-color-scheme: dark) {
+textarea {
+color: #fff;
+color: var(--form-text);
+}
+}
+select {
+color: #1d1d1d;
+color: var(--form-text);
+background-color: #efefef;
+background-color: var(--background);
+font-family: inherit;
+font-size: inherit;
+margin-right: 6px;
+margin-bottom: 6px;
+padding: 10px;
+border: none;
+border-radius: 6px;
+outline: none;
+}
+@media (prefers-color-scheme: dark) {
+select {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+@media (prefers-color-scheme: dark) {
+select {
+color: #fff;
+color: var(--form-text);
+}
+}
+button {
+background-color: #d0cfcf;
+background-color: var(--button-base);
+padding-right: 30px;
+padding-left: 30px;
+}
+@media (prefers-color-scheme: dark) {
+button {
+background-color: #0c151c;
+background-color: var(--button-base);
+}
+}
+input[type='submit'] {
+background-color: #d0cfcf;
+background-color: var(--button-base);
+padding-right: 30px;
+padding-left: 30px;
+}
+@media (prefers-color-scheme: dark) {
+input[type='submit'] {
+background-color: #0c151c;
+background-color: var(--button-base);
+}
+}
+input[type='reset'] {
+background-color: #d0cfcf;
+background-color: var(--button-base);
+padding-right: 30px;
+padding-left: 30px;
+}
+@media (prefers-color-scheme: dark) {
+input[type='reset'] {
+background-color: #0c151c;
+background-color: var(--button-base);
+}
+}
+input[type='button'] {
+background-color: #d0cfcf;
+background-color: var(--button-base);
+padding-right: 30px;
+padding-left: 30px;
+}
+@media (prefers-color-scheme: dark) {
+input[type='button'] {
+background-color: #0c151c;
+background-color: var(--button-base);
+}
+}
+button:hover {
+background: #9b9b9b;
+background: var(--button-hover);
+}
+@media (prefers-color-scheme: dark) {
+button:hover {
+background: #040a0f;
+background: var(--button-hover);
+}
+}
+input[type='submit']:hover {
+background: #9b9b9b;
+background: var(--button-hover);
+}
+@media (prefers-color-scheme: dark) {
+input[type='submit']:hover {
+background: #040a0f;
+background: var(--button-hover);
+}
+}
+input[type='reset']:hover {
+background: #9b9b9b;
+background: var(--button-hover);
+}
+@media (prefers-color-scheme: dark) {
+input[type='reset']:hover {
+background: #040a0f;
+background: var(--button-hover);
+}
+}
+input[type='button']:hover {
+background: #9b9b9b;
+background: var(--button-hover);
+}
+@media (prefers-color-scheme: dark) {
+input[type='button']:hover {
+background: #040a0f;
+background: var(--button-hover);
+}
+}
+input[type='color'] {
+min-height: 2rem;
+padding: 8px;
+cursor: pointer;
+}
+input[type='checkbox'],
+input[type='radio'] {
+height: 1em;
+width: 1em;
+}
+input[type='radio'] {
+border-radius: 100%;
+}
+input {
+vertical-align: top;
+}
+label {
+vertical-align: middle;
+margin-bottom: 4px;
+display: inline-block;
+}
+input:not([type='checkbox']):not([type='radio']),
+input[type='range'],
+select,
+button,
+textarea {
+-webkit-appearance: none;
+}
+textarea {
+display: block;
+margin-right: 0;
+box-sizing: border-box;
+resize: vertical;
+}
+textarea:not([cols]) {
+width: 100%;
+}
+textarea:not([rows]) {
+min-height: 40px;
+height: 140px;
+}
+select {
+background: #efefef url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23161f27'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E") calc(100% - 12px) 50% / 12px no-repeat;
+background: var(--background) var(--select-arrow) calc(100% - 12px) 50% / 12px no-repeat;
+padding-right: 35px;
+}
+@media (prefers-color-scheme: dark) {
+select {
+background: #161f27 url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23efefef'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E") calc(100% - 12px) 50% / 12px no-repeat;
+background: var(--background) var(--select-arrow) calc(100% - 12px) 50% / 12px no-repeat;
+}
+}
+@media (prefers-color-scheme: dark) {
+select {
+background: #161f27 url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23efefef'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E") calc(100% - 12px) 50% / 12px no-repeat;
+background: var(--background) var(--select-arrow) calc(100% - 12px) 50% / 12px no-repeat;
+}
+}
+@media (prefers-color-scheme: dark) {
+select {
+background: #161f27 url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23efefef'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E") calc(100% - 12px) 50% / 12px no-repeat;
+background: var(--background) var(--select-arrow) calc(100% - 12px) 50% / 12px no-repeat;
+}
+}
+@media (prefers-color-scheme: dark) {
+select {
+background: #161f27 url("data:image/svg+xml;charset=utf-8,%3C?xml version='1.0' encoding='utf-8'?%3E %3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' height='62.5' width='116.9' fill='%23efefef'%3E %3Cpath d='M115.3,1.6 C113.7,0 111.1,0 109.5,1.6 L58.5,52.7 L7.4,1.6 C5.8,0 3.2,0 1.6,1.6 C0,3.2 0,5.8 1.6,7.4 L55.5,61.3 C56.3,62.1 57.3,62.5 58.4,62.5 C59.4,62.5 60.5,62.1 61.3,61.3 L115.2,7.4 C116.9,5.8 116.9,3.2 115.3,1.6Z'/%3E %3C/svg%3E") calc(100% - 12px) 50% / 12px no-repeat;
+background: var(--background) var(--select-arrow) calc(100% - 12px) 50% / 12px no-repeat;
+}
+}
+select::-ms-expand {
+display: none;
+}
+select[multiple] {
+padding-right: 10px;
+background-image: none;
+overflow-y: auto;
+}
+input:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+@media (prefers-color-scheme: dark) {
+input:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+}
+select:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+@media (prefers-color-scheme: dark) {
+select:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+}
+button:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+@media (prefers-color-scheme: dark) {
+button:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+}
+textarea:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+@media (prefers-color-scheme: dark) {
+textarea:focus {
+box-shadow: 0 0 0 2px #0096bfab;
+box-shadow: 0 0 0 2px var(--focus);
+}
+}
+input[type='checkbox']:active,
+input[type='radio']:active,
+input[type='submit']:active,
+input[type='reset']:active,
+input[type='button']:active,
+input[type='range']:active,
+button:active {
+transform: translateY(2px);
+}
+input:disabled,
+select:disabled,
+button:disabled,
+textarea:disabled {
+cursor: not-allowed;
+opacity: 0.5;
+}
+::-moz-placeholder {
+color: #949494;
+color: var(--form-placeholder);
+}
+:-ms-input-placeholder {
+color: #949494;
+color: var(--form-placeholder);
+}
+::-ms-input-placeholder {
+color: #949494;
+color: var(--form-placeholder);
+}
+::placeholder {
+color: #949494;
+color: var(--form-placeholder);
+}
+@media (prefers-color-scheme: dark) {
+::-moz-placeholder {
+color: #a9a9a9;
+color: var(--form-placeholder);
+}
+:-ms-input-placeholder {
+color: #a9a9a9;
+color: var(--form-placeholder);
+}
+::-ms-input-placeholder {
+color: #a9a9a9;
+color: var(--form-placeholder);
+}
+::placeholder {
+color: #a9a9a9;
+color: var(--form-placeholder);
+}
+}
+fieldset {
+border: 1px #0096bfab solid;
+border: 1px var(--focus) solid;
+border-radius: 6px;
+margin: 0;
+margin-bottom: 12px;
+padding: 10px;
+}
+@media (prefers-color-scheme: dark) {
+fieldset {
+border: 1px #0096bfab solid;
+border: 1px var(--focus) solid;
+}
+}
+legend {
+font-size: 0.9em;
+font-weight: 600;
+}
+input[type='range'] {
+margin: 10px 0;
+padding: 10px 0;
+background: transparent;
+}
+input[type='range']:focus {
+outline: none;
+}
+input[type='range']::-webkit-slider-runnable-track {
+width: 100%;
+height: 9.5px;
+-webkit-transition: 0.2s;
+transition: 0.2s;
+background: #efefef;
+background: var(--background);
+border-radius: 3px;
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-webkit-slider-runnable-track {
+background: #161f27;
+background: var(--background);
+}
+}
+input[type='range']::-webkit-slider-thumb {
+box-shadow: 0 1px 1px #000, 0 0 1px #0d0d0d;
+height: 20px;
+width: 20px;
+border-radius: 50%;
+background: #dbdbdb;
+background: var(--border);
+-webkit-appearance: none;
+margin-top: -7px;
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-webkit-slider-thumb {
+background: #526980;
+background: var(--border);
+}
+}
+input[type='range']:focus::-webkit-slider-runnable-track {
+background: #efefef;
+background: var(--background);
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']:focus::-webkit-slider-runnable-track {
+background: #161f27;
+background: var(--background);
+}
+}
+input[type='range']::-moz-range-track {
+width: 100%;
+height: 9.5px;
+-moz-transition: 0.2s;
+transition: 0.2s;
+background: #efefef;
+background: var(--background);
+border-radius: 3px;
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-moz-range-track {
+background: #161f27;
+background: var(--background);
+}
+}
+input[type='range']::-moz-range-thumb {
+box-shadow: 1px 1px 1px #000, 0 0 1px #0d0d0d;
+height: 20px;
+width: 20px;
+border-radius: 50%;
+background: #dbdbdb;
+background: var(--border);
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-moz-range-thumb {
+background: #526980;
+background: var(--border);
+}
+}
+input[type='range']::-ms-track {
+width: 100%;
+height: 9.5px;
+background: transparent;
+border-color: transparent;
+border-width: 16px 0;
+color: transparent;
+}
+input[type='range']::-ms-fill-lower {
+background: #efefef;
+background: var(--background);
+border: 0.2px solid #010101;
+border-radius: 3px;
+box-shadow: 1px 1px 1px #000, 0 0 1px #0d0d0d;
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-ms-fill-lower {
+background: #161f27;
+background: var(--background);
+}
+}
+input[type='range']::-ms-fill-upper {
+background: #efefef;
+background: var(--background);
+border: 0.2px solid #010101;
+border-radius: 3px;
+box-shadow: 1px 1px 1px #000, 0 0 1px #0d0d0d;
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-ms-fill-upper {
+background: #161f27;
+background: var(--background);
+}
+}
+input[type='range']::-ms-thumb {
+box-shadow: 1px 1px 1px #000, 0 0 1px #0d0d0d;
+border: 1px solid #000;
+height: 20px;
+width: 20px;
+border-radius: 50%;
+background: #dbdbdb;
+background: var(--border);
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']::-ms-thumb {
+background: #526980;
+background: var(--border);
+}
+}
+input[type='range']:focus::-ms-fill-lower {
+background: #efefef;
+background: var(--background);
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']:focus::-ms-fill-lower {
+background: #161f27;
+background: var(--background);
+}
+}
+input[type='range']:focus::-ms-fill-upper {
+background: #efefef;
+background: var(--background);
+}
+@media (prefers-color-scheme: dark) {
+input[type='range']:focus::-ms-fill-upper {
+background: #161f27;
+background: var(--background);
+}
+}
+a {
+text-decoration: none;
+color: #0076d1;
+color: var(--links);
+}
+@media (prefers-color-scheme: dark) {
+a {
+color: #41adff;
+color: var(--links);
+}
+}
+a:hover {
+text-decoration: underline;
+}
+code {
+background: #efefef;
+background: var(--background);
+color: #000;
+color: var(--code);
+padding: 2.5px 5px;
+border-radius: 6px;
+font-size: 1em;
+}
+@media (prefers-color-scheme: dark) {
+code {
+color: #ffbe85;
+color: var(--code);
+}
+}
+@media (prefers-color-scheme: dark) {
+code {
+background: #161f27;
+background: var(--background);
+}
+}
+samp {
+background: #efefef;
+background: var(--background);
+color: #000;
+color: var(--code);
+padding: 2.5px 5px;
+border-radius: 6px;
+font-size: 1em;
+}
+@media (prefers-color-scheme: dark) {
+samp {
+color: #ffbe85;
+color: var(--code);
+}
+}
+@media (prefers-color-scheme: dark) {
+samp {
+background: #161f27;
+background: var(--background);
+}
+}
+time {
+background: #efefef;
+background: var(--background);
+color: #000;
+color: var(--code);
+padding: 2.5px 5px;
+border-radius: 6px;
+font-size: 1em;
+}
+@media (prefers-color-scheme: dark) {
+time {
+color: #ffbe85;
+color: var(--code);
+}
+}
+@media (prefers-color-scheme: dark) {
+time {
+background: #161f27;
+background: var(--background);
+}
+}
+pre > code {
+padding: 10px;
+display: block;
+overflow-x: auto;
+}
+var {
+color: #39a33c;
+color: var(--variable);
+font-style: normal;
+font-family: monospace;
+}
+@media (prefers-color-scheme: dark) {
+var {
+color: #d941e2;
+color: var(--variable);
+}
+}
+kbd {
+background: #efefef;
+background: var(--background);
+border: 1px solid #dbdbdb;
+border: 1px solid var(--border);
+border-radius: 2px;
+color: #363636;
+color: var(--text-main);
+padding: 2px 4px 2px 4px;
+}
+@media (prefers-color-scheme: dark) {
+kbd {
+color: #dbdbdb;
+color: var(--text-main);
+}
+}
+@media (prefers-color-scheme: dark) {
+kbd {
+border: 1px solid #526980;
+border: 1px solid var(--border);
+}
+}
+@media (prefers-color-scheme: dark) {
+kbd {
+background: #161f27;
+background: var(--background);
+}
+}
+img,
+video {
+max-width: 100%;
+height: auto;
+}
+hr {
+border: none;
+border-top: 1px solid #dbdbdb;
+border-top: 1px solid var(--border);
+}
+@media (prefers-color-scheme: dark) {
+hr {
+border-top: 1px solid #526980;
+border-top: 1px solid var(--border);
+}
+}
+table {
+border-collapse: collapse;
+margin-bottom: 10px;
+width: 100%;
+table-layout: fixed;
+}
+table caption {
+text-align: left;
+}
+td,
+th {
+padding: 6px;
+text-align: left;
+vertical-align: top;
+word-wrap: break-word;
+}
+thead {
+border-bottom: 1px solid #dbdbdb;
+border-bottom: 1px solid var(--border);
+}
+@media (prefers-color-scheme: dark) {
+thead {
+border-bottom: 1px solid #526980;
+border-bottom: 1px solid var(--border);
+}
+}
+tfoot {
+border-top: 1px solid #dbdbdb;
+border-top: 1px solid var(--border);
+}
+@media (prefers-color-scheme: dark) {
+tfoot {
+border-top: 1px solid #526980;
+border-top: 1px solid var(--border);
+}
+}
+tbody tr:nth-child(even) {
+background-color: #efefef;
+background-color: var(--background);
+}
+@media (prefers-color-scheme: dark) {
+tbody tr:nth-child(even) {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+tbody tr:nth-child(even) button {
+background-color: #f7f7f7;
+background-color: var(--background-alt);
+}
+@media (prefers-color-scheme: dark) {
+tbody tr:nth-child(even) button {
+background-color: #1a242f;
+background-color: var(--background-alt);
+}
+}
+tbody tr:nth-child(even) button:hover {
+background-color: #fff;
+background-color: var(--background-body);
+}
+@media (prefers-color-scheme: dark) {
+tbody tr:nth-child(even) button:hover {
+background-color: #202b38;
+background-color: var(--background-body);
+}
+}
+::-webkit-scrollbar {
+height: 10px;
+width: 10px;
+}
+::-webkit-scrollbar-track {
+background: #efefef;
+background: var(--background);
+border-radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+::-webkit-scrollbar-track {
+background: #161f27;
+background: var(--background);
+}
+}
+::-webkit-scrollbar-thumb {
+background: rgb(170, 170, 170);
+background: var(--scrollbar-thumb);
+border-radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+::-webkit-scrollbar-thumb {
+background: #040a0f;
+background: var(--scrollbar-thumb);
+}
+}
+@media (prefers-color-scheme: dark) {
+::-webkit-scrollbar-thumb {
+background: #040a0f;
+background: var(--scrollbar-thumb);
+}
+}
+::-webkit-scrollbar-thumb:hover {
+background: #9b9b9b;
+background: var(--scrollbar-thumb-hover);
+}
+@media (prefers-color-scheme: dark) {
+::-webkit-scrollbar-thumb:hover {
+background: rgb(0, 0, 0);
+background: var(--scrollbar-thumb-hover);
+}
+}
+@media (prefers-color-scheme: dark) {
+::-webkit-scrollbar-thumb:hover {
+background: rgb(0, 0, 0);
+background: var(--scrollbar-thumb-hover);
+}
+}
+::-moz-selection {
+background-color: #9e9e9e;
+background-color: var(--selection);
+color: #000;
+color: var(--text-bright);
+}
+::selection {
+background-color: #9e9e9e;
+background-color: var(--selection);
+color: #000;
+color: var(--text-bright);
+}
+@media (prefers-color-scheme: dark) {
+::-moz-selection {
+color: #fff;
+color: var(--text-bright);
+}
+::selection {
+color: #fff;
+color: var(--text-bright);
+}
+}
+@media (prefers-color-scheme: dark) {
+::-moz-selection {
+background-color: #1c76c5;
+background-color: var(--selection);
+}
+::selection {
+background-color: #1c76c5;
+background-color: var(--selection);
+}
+}
+details {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+background-color: #f7f7f7;
+background-color: var(--background-alt);
+padding: 10px 10px 0;
+margin: 1em 0;
+border-radius: 6px;
+overflow: hidden;
+}
+@media (prefers-color-scheme: dark) {
+details {
+background-color: #1a242f;
+background-color: var(--background-alt);
+}
+}
+details[open] {
+padding: 10px;
+}
+details > :last-child {
+margin-bottom: 0;
+}
+details[open] summary {
+margin-bottom: 10px;
+}
+summary {
+display: list-item;
+background-color: #efefef;
+background-color: var(--background);
+padding: 10px;
+margin: -10px -10px 0;
+cursor: pointer;
+outline: none;
+}
+@media (prefers-color-scheme: dark) {
+summary {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+summary:hover,
+summary:focus {
+text-decoration: underline;
+}
+details > :not(summary) {
+margin-top: 0;
+}
+summary::-webkit-details-marker {
+color: #363636;
+color: var(--text-main);
+}
+@media (prefers-color-scheme: dark) {
+summary::-webkit-details-marker {
+color: #dbdbdb;
+color: var(--text-main);
+}
+}
+dialog {
+background-color: #f7f7f7;
+background-color: var(--background-alt);
+color: #363636;
+color: var(--text-main);
+border: none;
+border-radius: 6px;
+border-color: #dbdbdb;
+border-color: var(--border);
+padding: 10px 30px;
+}
+@media (prefers-color-scheme: dark) {
+dialog {
+border-color: #526980;
+border-color: var(--border);
+}
+}
+@media (prefers-color-scheme: dark) {
+dialog {
+color: #dbdbdb;
+color: var(--text-main);
+}
+}
+@media (prefers-color-scheme: dark) {
+dialog {
+background-color: #1a242f;
+background-color: var(--background-alt);
+}
+}
+dialog > header:first-child {
+background-color: #efefef;
+background-color: var(--background);
+border-radius: 6px 6px 0 0;
+margin: -10px -30px 10px;
+padding: 10px;
+text-align: center;
+}
+@media (prefers-color-scheme: dark) {
+dialog > header:first-child {
+background-color: #161f27;
+background-color: var(--background);
+}
+}
+dialog::-webkit-backdrop {
+background: #0000009c;
+-webkit-backdrop-filter: blur(4px);
+backdrop-filter: blur(4px);
+}
+dialog::backdrop {
+background: #0000009c;
+-webkit-backdrop-filter: blur(4px);
+backdrop-filter: blur(4px);
+}
+footer {
+border-top: 1px solid #dbdbdb;
+border-top: 1px solid var(--border);
+padding-top: 10px;
+color: #70777f;
+color: var(--text-muted);
+}
+@media (prefers-color-scheme: dark) {
+footer {
+color: #a9b1ba;
+color: var(--text-muted);
+}
+}
+@media (prefers-color-scheme: dark) {
+footer {
+border-top: 1px solid #526980;
+border-top: 1px solid var(--border);
+}
+}
+body > footer {
+margin-top: 40px;
+}
+@media print {
+body,
+pre,
+code,
+summary,
+details,
+button,
+input,
+textarea {
+background-color: #fff;
+}
+button,
+input,
+textarea {
+border: 1px solid #000;
+}
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+pre,
+code,
+button,
+input,
+textarea,
+footer,
+summary,
+strong {
+color: #000;
+}
+summary::marker {
+color: #000;
+}
+summary::-webkit-details-marker {
+color: #000;
+}
+tbody tr:nth-child(even) {
+background-color: #f2f2f2;
+}
+a {
+color: #00f;
+text-decoration: underline;
+}
+}
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">CodeBuddy Code 产品架构与快速上手指南</h1>
+</header>
+<h1 id="codebuddy-code-产品架构与快速上手指南">CodeBuddy Code
+产品架构与快速上手指南</h1>
+<h2 id="目录">目录</h2>
+<ol type="1">
+<li><a href="#产品概述">产品概述</a></li>
+<li><a href="#整体架构">整体架构</a></li>
+<li><a href="#核心模块详解">核心模块详解</a></li>
+<li><a href="#工作流程图">工作流程图</a></li>
+<li><a href="#快速上手">快速上手</a></li>
+<li><a href="#最佳实践">最佳实践</a></li>
+</ol>
+<hr />
+<h2 id="产品概述">产品概述</h2>
+<h3 id="什么是-codebuddy-code">什么是 CodeBuddy Code？</h3>
+<p>CodeBuddy Code 是一个 AI
+驱动的智能编程助手，通过命令行界面(CLI)为开发者提供代码编写、分析、调试等全方位支持。它基于大语言模型（Claude），结合了强大的工具系统和安全机制。</p>
+<h3 id="核心特性">核心特性</h3>
+<ul>
+<li><strong>智能代码理解</strong>：深度理解代码库结构和业务逻辑</li>
+<li><strong>自动化任务执行</strong>：通过 AI
+自动完成编码、测试、重构等任务</li>
+<li><strong>安全隔离</strong>：沙箱环境保护系统安全</li>
+<li><strong>高度可扩展</strong>：插件、Skills、Hooks 等多种扩展方式</li>
+<li><strong>团队协作</strong>：支持项目级配置和团队共享</li>
+</ul>
+<hr />
+<h2 id="整体架构">整体架构</h2>
+<h3 id="架构分层">架构分层</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                      用户交互层                              │
+│  CLI 命令行 / HTTP API / IDE 集成                           │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────────────┐
+│                   AI 核心引擎层                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │  模型管理    │  │  上下文管理  │  │  任务分析    │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────────────┐
+│                    能力扩展层                                │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│  │ Sub-     │ │ Skills   │ │ Slash    │ │ Plugins  │       │
+│  │ Agents   │ │          │ │ Commands │ │          │       │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────────────┐
+│                    工具执行层                                │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌──────┐ ┌──────┐ ┌──────┐       │
+│  │Read │ │Write│ │Edit │ │ Bash │ │ Grep │ │ Glob │       │
+│  └─────┘ └─────┘ └─────┘ └──────┘ └──────┘ └──────┘       │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐                   │
+│  │WebFetch  │ │WebSearch │ │   Task   │                   │
+│  └──────────┘ └──────────┘ └──────────┘                   │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────────────┐
+│                  集成与扩展层                                │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ MCP 协议     │  │ Memory 系统  │  │ Hooks 系统   │      │
+│  │ (外部工具)   │  │ (记忆管理)   │  │ (事件钩子)   │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+┌────────────────────────┴────────────────────────────────────┐
+│                    安全与权限层                              │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
+│  │ 权限系统     │  │ 沙箱隔离     │  │ IAM 认证     │      │
+│  └──────────────┘  └──────────────┘  └──────────────┘      │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<hr />
+<h2 id="核心模块详解">核心模块详解</h2>
+<h3 id="sub-agents-系统子代理系统">1. Sub-Agents 系统（子代理系统）</h3>
+<h4 id="功能定位">功能定位</h4>
+<p>Sub-Agents 是专业化的 AI 助手，负责处理特定领域的任务。</p>
+<h4 id="架构特点">架构特点</h4>
+<pre><code>主 Agent
+  ├── 分析任务
+  ├── 选择 Sub-agent
+  └── 委派执行
+       ├── code-reviewer (代码审查)
+       ├── test-runner (测试运行)
+       ├── refactoring-expert (重构专家)
+       └── doc-writer (文档编写)</code></pre>
+<h4 id="核心组件">核心组件</h4>
+<ul>
+<li><strong>独立上下文</strong>：每个 sub-agent
+在隔离的上下文窗口中运行</li>
+<li><strong>专业工具集</strong>：可配置特定的工具访问权限</li>
+<li><strong>权限控制</strong>：支持不同的权限模式（default、acceptEdits、bypassPermissions、plan）</li>
+<li><strong>会话管理</strong>：支持会话恢复和链式调用</li>
+</ul>
+<h4 id="配置示例">配置示例</h4>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">--- </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> test-runner</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> 运行测试并修复失败的测试用例</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="an">tools:</span><span class="co"> [Read, Bash, Write, Edit]</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="an">model:</span><span class="co"> haiku</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="an">permissionMode:</span><span class="co"> acceptEdits</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>你是一个专业的测试运行专家。执行以下任务：</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>运行项目的测试套件</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>分析失败的测试</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>提供修复建议或自动修复</span></code></pre></div>
+<h4 id="工作流程">工作流程</h4>
+<pre><code>用户请求 → 主 Agent 分析 → 匹配 Sub-agent → 创建独立会话
+    ↓
+加载配置（工具、模型、权限）
+    ↓
+执行任务（在隔离上下文中）
+    ↓
+返回结果 + Agent ID</code></pre>
+<hr />
+<h3 id="skills-系统技能系统">2. Skills 系统（技能系统）</h3>
+<h4 id="功能定位-1">功能定位</h4>
+<p>Skills 是 AI 自动识别和调用的专业能力模块，对用户透明。</p>
+<h4 id="与-sub-agents-的区别">与 Sub-Agents 的区别</h4>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Skills</th>
+<th>Sub-Agents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>调用方式</td>
+<td>AI 自动识别</td>
+<td>显式委派</td>
+</tr>
+<tr>
+<td>上下文</td>
+<td>共享主上下文</td>
+<td>独立上下文</td>
+</tr>
+<tr>
+<td>复杂度</td>
+<td>轻量级能力</td>
+<td>复杂任务</td>
+</tr>
+</tbody>
+</table>
+<h4 id="目录结构">目录结构</h4>
+<pre><code>.codebuddy/skills/          # 项目级（优先）
+  └── data-analysis/
+      └── SKILL.md
+~/.codebuddy/skills/        # 用户级（全局）
+  └── frontend-design/
+      └── SKILL.md</code></pre>
+<h4 id="skill-定义">Skill 定义</h4>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> data-analysis</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> 数据分析和可视化能力</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="an">allowed-tools:</span><span class="co"> Read, Bash(python:*), Write</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">## 数据分析专家</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>当用户需要分析数据时，自动应用以下能力：</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>数据清洗和预处理</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>统计分析</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>可视化生成</span></code></pre></div>
+<hr />
+<h3 id="mcp-集成model-context-protocol">3. MCP 集成（Model Context
+Protocol）</h3>
+<h4 id="架构设计">架构设计</h4>
+<pre><code>CodeBuddy Code (客户端)
+    ↓
+    ├─ STDIO ──→ 本地工具进程
+    ├─ SSE ────→ 远程事件服务
+    └─ HTTP ───→ HTTP 服务</code></pre>
+<h4 id="三种传输方式">三种传输方式</h4>
+<p><strong>1. STDIO（标准输入输出）</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;stdio&quot;</span><span class="fu">,</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;/path/to/tool&quot;</span><span class="fu">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;args&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;arg1&quot;</span><span class="ot">,</span> <span class="st">&quot;arg2&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;env&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;KEY&quot;</span><span class="fu">:</span> <span class="st">&quot;value&quot;</span><span class="fu">}</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>2. SSE（Server-Sent Events）</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;sse&quot;</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://example.com/sse&quot;</span><span class="fu">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;headers&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;Authorization&quot;</span><span class="fu">:</span> <span class="st">&quot;Bearer token&quot;</span><span class="fu">}</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p><strong>3. HTTP（HTTP 流式传输）</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;http&quot;</span><span class="fu">,</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;url&quot;</span><span class="fu">:</span> <span class="st">&quot;https://example.com/mcp&quot;</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;headers&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;X-API-Key&quot;</span><span class="fu">:</span> <span class="st">&quot;key&quot;</span><span class="fu">}</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="配置作用域">配置作用域</h4>
+<table>
+<thead>
+<tr>
+<th>作用域</th>
+<th>配置文件</th>
+<th>优先级</th>
+<th>应用范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>local</td>
+<td><code>~/.codebuddy.json#/projects/</code></td>
+<td>高</td>
+<td>当前会话</td>
+</tr>
+<tr>
+<td>project</td>
+<td><code>&lt;项目根&gt;/.mcp.json</code></td>
+<td>中</td>
+<td>特定项目</td>
+</tr>
+<tr>
+<td>user</td>
+<td><code>~/.codebuddy.json</code></td>
+<td>低</td>
+<td>所有项目</td>
+</tr>
+</tbody>
+</table>
+<h4 id="安全机制">安全机制</h4>
+<ul>
+<li><strong>项目作用域审批</strong>：首次连接需用户批准</li>
+<li><strong>工具权限管理</strong>：三级权限（deny、ask、allow）</li>
+<li><strong>OAuth 验证</strong>：仅支持 http/https 协议</li>
+</ul>
+<hr />
+<h3 id="memory-系统记忆系统">4. Memory 系统（记忆系统）</h3>
+<h4 id="分层架构">分层架构</h4>
+<pre><code>用户记忆 (~/.codebuddy/CODEBUDDY.md)     [优先级：最高]
+  ├── 个人偏好
+  ├── 全局配置
+  └── 跨项目规则
+      ↓
+项目记忆 (./CODEBUDDY.md)                [优先级：次高]
+  ├── 团队约定
+  ├── 项目规范
+  └── 导入的外部文档
+      ↓
+子目录记忆（延迟加载）                    [优先级：按需]</code></pre>
+<h4 id="记忆发现机制">记忆发现机制</h4>
+<pre><code>工作原理：递归向上查找
+当前目录：/home/user/project/foo/bar/
+
+查找路径：
+✓ /home/user/project/foo/bar/CODEBUDDY.md
+✓ /home/user/project/foo/CODEBUDDY.md
+✓ /home/user/project/CODEBUDDY.md
+✗ /home/user/CODEBUDDY.md（到根目录为止）</code></pre>
+<h4 id="导入系统">导入系统</h4>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># CODEBUDDY.md</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">## CodeBuddy Added Memories</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">### 项目规范</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>@./docs/coding-standards.md</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>@./docs/architecture.md</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="fu">### 个人偏好</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>@~/.codebuddy/my-preferences.md</span></code></pre></div>
+<p><strong>递归深度限制</strong>：最大 5 跳</p>
+<hr />
+<h3 id="安全与权限系统">5. 安全与权限系统</h3>
+<h4 id="多层防御架构">多层防御架构</h4>
+<pre><code>┌─────────────────────────────────────┐
+│ 第一层：基于权限的访问控制          │
+│  - 默认只读                         │
+│  - 显式授权                         │
+└─────────────────┬───────────────────┘
+                  │
+┌─────────────────┴───────────────────┐
+│ 第二层：沙箱隔离                    │
+│  - 文件系统隔离                     │
+│  - 网络隔离                         │
+└─────────────────┬───────────────────┘
+                  │
+┌─────────────────┴───────────────────┐
+│ 第三层：权限策略                    │
+│  - deny（拒绝）                     │
+│  - ask（询问）                      │
+│  - allow（允许）                    │
+└─────────────────┬───────────────────┘
+                  │
+┌─────────────────┴───────────────────┐
+│ 第四层：IAM 认证                    │
+│  - 凭据加密存储                     │
+│  - 动态密钥获取                     │
+└─────────────────────────────────────┘</code></pre>
+<h4 id="沙箱工作原理">沙箱工作原理</h4>
+<p><strong>文件系统隔离</strong></p>
+<pre><code>默认访问权限：
+├── 写入：当前工作目录及子目录
+├── 读取：整个计算机（除拒绝目录）
+└── 保护：~/.ssh、~/.bashrc、/bin 等</code></pre>
+<p><strong>网络隔离</strong></p>
+<pre><code>沙箱内进程 → 代理服务器 → 外部网络
+              ├─ 域名白名单检查
+              ├─ 用户确认请求
+              └─ 流量记录</code></pre>
+<p><strong>平台实现</strong> - Linux: Bubblewrap 容器化 - macOS:
+Seatbelt 沙箱框架</p>
+<hr />
+<h3 id="hooks-系统钩子系统">6. Hooks 系统（钩子系统）</h3>
+<h4 id="事件生命周期">事件生命周期</h4>
+<pre><code>SessionStart → UserPromptSubmit → PreToolUse → PostToolUse → Stop → SessionEnd
+    │               │                  │             │           │         │
+    ↓               ↓                  ↓             ↓           ↓         ↓
+  初始化          预处理            阻止检查       后处理      清理      归档</code></pre>
+<h4 id="核心事件">核心事件</h4>
+<table>
+<thead>
+<tr>
+<th>事件</th>
+<th>触发时机</th>
+<th>典型用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PreToolUse</td>
+<td>工具调用前</td>
+<td>日志记录、权限检查、阻止操作</td>
+</tr>
+<tr>
+<td>PostToolUse</td>
+<td>工具调用后</td>
+<td>自动格式化、验证、通知</td>
+</tr>
+<tr>
+<td>UserPromptSubmit</td>
+<td>用户提交后</td>
+<td>输入预处理</td>
+</tr>
+<tr>
+<td>Notification</td>
+<td>发送通知时</td>
+<td>自定义通知方式</td>
+</tr>
+</tbody>
+</table>
+<h4 id="配置结构">配置结构</h4>
+<div class="sourceCode" id="cb18"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;PreToolUse&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;matcher&quot;</span><span class="fu">:</span> <span class="st">&quot;Edit|Write&quot;</span><span class="fu">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;jq -r &#39;.tool_input.file_path&#39; | python format.py&quot;</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h3 id="插件系统">7. 插件系统</h3>
+<h4 id="插件架构">插件架构</h4>
+<pre><code>插件包
+├── manifest.json         # 插件清单
+├── commands/             # 斜杠命令
+│   └── example.md
+├── skills/               # Skills
+│   └── SKILL.md
+└── hooks/                # Hooks
+    └── hooks.json</code></pre>
+<h4 id="插件市场类型">插件市场类型</h4>
+<ol type="1">
+<li><strong>本地目录市场</strong>：从本地文件系统加载</li>
+<li><strong>GitHub 市场</strong>：从 GitHub 仓库获取</li>
+<li><strong>HTTP 市场</strong>：从 HTTP 服务器获取</li>
+</ol>
+<h4 id="自动安装流程">自动安装流程</h4>
+<div class="sourceCode" id="cb20"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">.codebuddy/settings.json</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;extraKnownMarketplaces&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;team-plugins&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="st">&quot;github&quot;</span><span class="fu">,</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;repo&quot;</span><span class="fu">:</span> <span class="st">&quot;org/team-plugins&quot;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;enabledPlugins&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;plugin-a@team-plugins&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>启动时自动：安装市场 → 安装插件 → 后台执行</p>
+<hr />
+<h2 id="工作流程图">工作流程图</h2>
+<h3 id="完整请求处理流程">完整请求处理流程</h3>
+<pre class="mermaid"><code>graph TD
+    A[用户输入] --&gt; B[SessionStart Hook]
+    B --&gt; C[UserPromptSubmit Hook]
+    C --&gt; D[AI 分析任务]
+    D --&gt; E{是否需要专业能力?}
+    
+    E --&gt;|是| F[Skills 自动识别]
+    E --&gt;|否| G[直接处理]
+    
+    F --&gt; H{是否需要委派?}
+    H --&gt;|是| I[选择 Sub-Agent]
+    H --&gt;|否| G
+    
+    I --&gt; J[创建独立会话]
+    J --&gt; K[加载配置]
+    
+    K --&gt; L[工具调用]
+    G --&gt; L
+    
+    L --&gt; M[PreToolUse Hook]
+    M --&gt; N{是否阻止?}
+    N --&gt;|是| O[返回错误]
+    N --&gt;|否| P[权限检查]
+    
+    P --&gt; Q{权限模式?}
+    Q --&gt;|deny| O
+    Q --&gt;|ask| R[请求用户批准]
+    Q --&gt;|allow| S[执行工具]
+    
+    R --&gt;|批准| S
+    R --&gt;|拒绝| O
+    
+    S --&gt; T[PostToolUse Hook]
+    T --&gt; U[返回结果]
+    U --&gt; V[Stop Hook]
+    V --&gt; W[SessionEnd Hook]</code></pre>
+<h3 id="sub-agent-调用流程">Sub-Agent 调用流程</h3>
+<pre><code>┌─────────────────────────────────────────┐
+│          主 Agent 任务分析              │
+└──────────────┬──────────────────────────┘
+               │
+    ┌──────────┴──────────┐
+    │                     │
+    ▼                     ▼
+自动委派              显式调用
+    │                     │
+    └──────────┬──────────┘
+               │
+    ┌──────────┴──────────┐
+    │  选择 Sub-Agent     │
+    │  - 匹配 description │
+    │  - 检查工具需求     │
+    └──────────┬──────────┘
+               │
+    ┌──────────┴──────────┐
+    │  创建独立会话       │
+    │  - 加载配置         │
+    │  - 设置权限         │
+    │  - 初始化上下文     │
+    └──────────┬──────────┘
+               │
+    ┌──────────┴──────────┐
+    │  执行任务           │
+    │  - 工具调用         │
+    │  - 权限检查         │
+    └──────────┬──────────┘
+               │
+    ┌──────────┴──────────┐
+    │  返回结果           │
+    │  - 任务输出         │
+    │  - Agent ID         │
+    └─────────────────────┘</code></pre>
+<hr />
+<h2 id="快速上手">快速上手</h2>
+<h3 id="安装和基本使用">安装和基本使用</h3>
+<h4 id="启动-codebuddy-code">1. 启动 CodeBuddy Code</h4>
+<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 基本启动</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 指定工作目录</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span> /path/to/project</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 非交互模式</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span> <span class="at">-p</span> <span class="st">&quot;分析这个项目的架构&quot;</span></span></code></pre></div>
+<h4 id="常用斜杠命令">2. 常用斜杠命令</h4>
+<div class="sourceCode" id="cb24"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/help</span>          <span class="co"># 帮助信息</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/memory</span>        <span class="co"># 查看/编辑记忆</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/init</span>          <span class="co"># 初始化项目配置</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/hooks</span>         <span class="co"># 配置 Hooks</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/plugin</span>        <span class="co"># 管理插件</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="ex">/permissions</span>   <span class="co"># 查看权限设置</span></span></code></pre></div>
+<h4 id="快速添加记忆">3. 快速添加记忆</h4>
+<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在对话中使用 # 符号</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 始终使用 TypeScript 编写代码</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 会弹出对话框选择保存位置</span></span></code></pre></div>
+<h3 id="项目初始化最佳实践">项目初始化最佳实践</h3>
+<h4 id="step-1-创建项目记忆">Step 1: 创建项目记忆</h4>
+<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="op">&gt;</span> /init</span></code></pre></div>
+<p>生成的 <code>CODEBUDDY.md</code>:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## CodeBuddy Added Memories</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="fu">### 项目信息</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>项目名称: MyProject</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>技术栈: React + TypeScript + Node.js</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### 开发规范</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>@./docs/coding-standards.md</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">### 常用命令</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>安装依赖: <span class="in">`npm install`</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>启动开发服务器: <span class="in">`npm run dev`</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>运行测试: <span class="in">`npm test`</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>构建生产版本: <span class="in">`npm run build`</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="fu">### 架构说明</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>前端: src/frontend/ (React + TypeScript)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>后端: src/backend/ (Node.js + Express)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>数据库: PostgreSQL</span></code></pre></div>
+<h4 id="step-2-配置团队插件">Step 2: 配置团队插件</h4>
+<div class="sourceCode" id="cb28"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">.codebuddy/settings.json</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;extraKnownMarketplaces&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;team&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;source&quot;</span><span class="fu">:</span> <span class="st">&quot;github&quot;</span><span class="fu">,</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;repo&quot;</span><span class="fu">:</span> <span class="st">&quot;your-org/codebuddy-plugins&quot;</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;enabledPlugins&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;code-standards@team&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;test-runner@team&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="step-3-创建项目级-sub-agents">Step 3: 创建项目级 Sub-Agents</h4>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> .codebuddy/agents/development</span></code></pre></div>
+<p><code>.codebuddy/agents/development/test-runner.md</code>:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="an">name:</span><span class="co"> test-runner</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="an">description:</span><span class="co"> 运行项目测试并修复失败</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="an">tools:</span><span class="co"> [Read, Bash, Write, Edit]</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="an">model:</span><span class="co"> haiku</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="an">permissionMode:</span><span class="co"> acceptEdits</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>你是测试专家。执行流程：</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>运行 <span class="in">`npm test`</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>分析失败测试</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>自动修复或提供建议</span></code></pre></div>
+<h4 id="step-4-配置沙箱和权限">Step 4: 配置沙箱和权限</h4>
+<div class="sourceCode" id="cb31"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">.codebuddy/settings.json</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;sandbox&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;enabled&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;autoAllowBashIfSandboxed&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;excludedCommands&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;git&quot;</span><span class="ot">,</span> <span class="st">&quot;docker&quot;</span><span class="ot">]</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;allow&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read&quot;</span><span class="ot">,</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(src/**/*.ts)&quot;</span><span class="ot">,</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(npm:*)&quot;</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;deny&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(**/*.env)&quot;</span><span class="ot">,</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(rm:*)&quot;</span><span class="ot">,</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(sudo:*)&quot;</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="最佳实践">最佳实践</h2>
+<h3 id="记忆管理">1. 记忆管理</h3>
+<h4 id="用户记忆-vs-项目记忆">用户记忆 vs 项目记忆</h4>
+<div class="sourceCode" id="cb32"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># ~/.codebuddy/CODEBUDDY.md (用户记忆)</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="fu">## CodeBuddy Added Memories</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="fu">### 语言偏好</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>请始终使用中文回答</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">### 个人风格</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>喜欢详细的代码注释</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>倾向函数式编程</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># ./CODEBUDDY.md (项目记忆)</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a><span class="fu">## CodeBuddy Added Memories</span></span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="fu">### 团队规范</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>使用 2 空格缩进</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>遵循 Airbnb 风格指南</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a><span class="fu">### 项目架构</span></span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>@./docs/architecture.md</span></code></pre></div>
+<h3 id="sub-agents-设计">2. Sub-Agents 设计</h3>
+<h4 id="单一职责原则">单一职责原则</h4>
+<div class="sourceCode" id="cb33"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>✅ 好的设计</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>code-reviewer: 只负责代码审查</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>test-runner: 只负责运行测试</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>doc-writer: 只负责文档编写</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>❌ 不好的设计</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>developer: 什么都做（职责不清晰）</span></code></pre></div>
+<h4 id="合理选择模型">合理选择模型</h4>
+<div class="sourceCode" id="cb34"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 简单任务 → haiku（快速 + 省钱）</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> haiku</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tools</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Bash</span><span class="kw">]</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> 运行测试命令</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 复杂任务 → sonnet（平衡）</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> sonnet</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a><span class="fu">tools</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Read</span><span class="kw">,</span><span class="at"> Write</span><span class="kw">,</span><span class="at"> Edit</span><span class="kw">]</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> 代码重构</span></span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 关键任务 → opus（高质量）</span></span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> opus</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a><span class="fu">tools</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">Read</span><span class="kw">,</span><span class="at"> Edit</span><span class="kw">]</span></span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> 安全审查</span></span></code></pre></div>
+<h3 id="安全配置">3. 安全配置</h3>
+<h4 id="分层权限策略">分层权限策略</h4>
+<div class="sourceCode" id="cb35"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;deny&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(**/*.env)&quot;</span><span class="ot">,</span>           <span class="er">//</span> <span class="er">保护敏感文件</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(package-lock.json)&quot;</span><span class="ot">,</span>  <span class="er">//</span> <span class="er">保护锁文件</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(rm:*)&quot;</span><span class="ot">,</span>               <span class="er">//</span> <span class="er">阻止删除命令</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(sudo:*)&quot;</span>              <span class="er">//</span> <span class="er">阻止</span> <span class="er">sudo</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;ask&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(package.json)&quot;</span><span class="ot">,</span>       <span class="er">//</span> <span class="er">依赖变更需确认</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(git:push)&quot;</span><span class="ot">,</span>           <span class="er">//</span> <span class="er">推送需确认</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;WebFetch&quot;</span>                  <span class="er">//</span> <span class="er">网络请求需确认</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;allow&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Read&quot;</span><span class="ot">,</span>                     <span class="er">//</span> <span class="er">允许读取</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Edit(src/**/*.ts)&quot;</span><span class="ot">,</span>        <span class="er">//</span> <span class="er">允许编辑源码</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(npm:test)&quot;</span><span class="ot">,</span>           <span class="er">//</span> <span class="er">允许测试</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Bash(npm:build)&quot;</span>           <span class="er">//</span> <span class="er">允许构建</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="mcp-集成">4. MCP 集成</h3>
+<h4 id="配置示例-1">配置示例</h4>
+<div class="sourceCode" id="cb36"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 添加 GitHub MCP 服务器</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span> mcp add <span class="at">--scope</span> user github <span class="dt">\</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">--</span> npx <span class="at">-y</span> @modelcontextprotocol/server-github</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 配置权限</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;permissions&quot;</span><span class="ex">:</span> {</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ask&quot;</span><span class="ex">:</span> <span class="pp">[</span><span class="st">&quot;mcp__github__create_issue&quot;</span><span class="pp">]</span>,</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;allow&quot;</span><span class="ex">:</span> <span class="pp">[</span><span class="st">&quot;mcp__github__get_issue&quot;</span><span class="pp">]</span></span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">}</span></span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<h3 id="hooks-自动化">5. Hooks 自动化</h3>
+<h4 id="代码格式化">代码格式化</h4>
+<div class="sourceCode" id="cb37"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;PostToolUse&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;matcher&quot;</span><span class="fu">:</span> <span class="st">&quot;Edit|Write&quot;</span><span class="fu">,</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;jq -r &#39;.tool_input.file_path&#39; | { read file; [[ $file == *.ts ]] &amp;&amp; npx prettier --write </span><span class="ch">\&quot;</span><span class="st">$file</span><span class="ch">\&quot;</span><span class="st">; exit 0; }&quot;</span></span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="命令审计">命令审计</h4>
+<div class="sourceCode" id="cb38"><pre class="sourceCode json"><code class="sourceCode json"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;PreToolUse&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;matcher&quot;</span><span class="fu">:</span> <span class="st">&quot;Bash&quot;</span><span class="fu">,</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;hooks&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="fu">{</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;command&quot;</span><span class="fu">,</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;command&quot;</span><span class="fu">:</span> <span class="st">&quot;jq -r &#39;.tool_input.command&#39; &gt;&gt; ~/.codebuddy/audit.log&quot;</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">]</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="常见使用场景">常见使用场景</h2>
+<h3 id="场景-1-代码审查">场景 1: 代码审查</h3>
+<div class="sourceCode" id="cb39"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 方式 1: 自动委派</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="ex">用户:</span> <span class="st">&quot;审查 src/auth.ts 的安全性&quot;</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="ex">→</span> AI 自动调用 code-reviewer sub-agent</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 方式 2: 显式调用</span></span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a><span class="ex">用户:</span> <span class="st">&quot;使用 code-reviewer 审查所有 API 端点&quot;</span></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="ex">→</span> 明确指定使用哪个 sub-agent</span></code></pre></div>
+<h3 id="场景-2-测试驱动开发">场景 2: 测试驱动开发</h3>
+<div class="sourceCode" id="cb40"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 配置 test-runner sub-agent</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="ex">.codebuddy/agents/test-runner.md</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用流程</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="ex">1.</span> 编写测试</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="ex">2.</span> <span class="st">&quot;运行测试并修复失败&quot;</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="ex">3.</span> sub-agent 自动执行并修复</span></code></pre></div>
+<h3 id="场景-3-文档生成">场景 3: 文档生成</h3>
+<div class="sourceCode" id="cb41"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用 doc-writer skill</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="ex">用户:</span> <span class="st">&quot;为这个项目生成 API 文档&quot;</span></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="ex">→</span> AI 识别需求，自动应用 doc-writer skill</span></code></pre></div>
+<h3 id="场景-4-数据分析">场景 4: 数据分析</h3>
+<div class="sourceCode" id="cb42"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># MCP 集成数据库</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span> mcp add db <span class="at">--</span> /path/to/db-tool</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 分析数据</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="ex">用户:</span> <span class="st">&quot;分析用户表的活跃度趋势&quot;</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="ex">→</span> 调用 MCP 工具查询数据</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="ex">→</span> 应用 data-analysis skill 生成报告</span></code></pre></div>
+<hr />
+<h2 id="调试和故障排除">调试和故障排除</h2>
+<h3 id="启用调试模式">启用调试模式</h3>
+<div class="sourceCode" id="cb43"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span> <span class="at">--debug</span></span></code></pre></div>
+<h3 id="常见问题">常见问题</h3>
+<h4 id="sub-agent-未被识别">1. Sub-Agent 未被识别</h4>
+<div class="sourceCode" id="cb44"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查清单</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="ex">□</span> 文件位置正确？ <span class="er">(</span><span class="ex">.codebuddy/agents/</span><span class="kw">)</span></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="ex">□</span> 文件扩展名是 .md？</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="ex">□</span> YAML frontmatter 格式正确？</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="ex">□</span> name 和 description 字段存在？</span></code></pre></div>
+<h4 id="权限问题">2. 权限问题</h4>
+<div class="sourceCode" id="cb45"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看当前权限</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/permissions</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查配置</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> .codebuddy/settings.json <span class="kw">|</span> <span class="ex">jq</span> .permissions</span></code></pre></div>
+<h4 id="沙箱问题">3. 沙箱问题</h4>
+<div class="sourceCode" id="cb46"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查沙箱状态</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="ex">codebuddy</span> <span class="at">--debug</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 临时禁用沙箱（调试用）</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;sandbox&quot;</span><span class="ex">:</span> {</span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;enabled&quot;</span><span class="ex">:</span> false</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">}</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<hr />
+<h2 id="总结">总结</h2>
+<p>CodeBuddy Code
+通过<strong>分层架构</strong>、<strong>模块化设计</strong>和<strong>安全机制</strong>，提供了一个强大而灵活的
+AI 编程助手平台：</p>
+<h3 id="核心优势">核心优势</h3>
+<ol type="1">
+<li><strong>智能化</strong>：AI 自动理解任务并选择合适的处理方式</li>
+<li><strong>安全性</strong>：多层防御保护系统和数据安全</li>
+<li><strong>可扩展</strong>：插件、Skills、Sub-Agents
+等多种扩展机制</li>
+<li><strong>团队协作</strong>：项目级配置支持团队共享和标准化</li>
+</ol>
+<h3 id="推荐学习路径">推荐学习路径</h3>
+<ol type="1">
+<li>基础使用 → 了解基本命令和工作流程</li>
+<li>记忆系统 → 配置个人和项目记忆</li>
+<li>Sub-Agents → 创建专业化任务处理器</li>
+<li>安全配置 → 设置权限和沙箱</li>
+<li>高级集成 → MCP、Hooks、Plugins</li>
+</ol>
+<h3 id="获取帮助">获取帮助</h3>
+<ul>
+<li>文档地图：https://cnb.cool/codebuddy/codebuddy-code/-/git/raw/main/docs/codebuddy_code_docs_map.md</li>
+<li>CLI 帮助：<code>/help</code> 或 <code>codebuddy --help</code></li>
+<li>问题反馈：https://cnb.cool/codebuddy/codebuddy-code/-/issues</li>
+</ul>
+<p>祝你使用 CodeBuddy Code 愉快！🚀</p>
+</body>
+</html>
