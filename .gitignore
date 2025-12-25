@@ -1,0 +1,7 @@
+# Ignore CodeBuddy and Spec-Kit directories
+.codebuddy/
+.specify/
+specs/
+
+# Python virtual environments
+.venv/
